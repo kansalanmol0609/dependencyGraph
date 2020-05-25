@@ -1,0 +1,16 @@
+{
+  "name": "dependencygraph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "@babel/core": "^7.9.6",
+    "enhanced-resolve": "^4.1.1"
+  }
+}
