@@ -18,7 +18,7 @@ function readFileContent(filepath) {
 }
 
 // Get both static and dynamic Imports from a given absolute path file
-const getImportsFromFile = (filePath, srcContext) => {
+const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
   console.log("FILE BEING PARSED: ", filePath);
   const dir = path.parse(filePath).dir;  
   const fileContent = readFileContent(filePath);
@@ -64,6 +64,7 @@ const getImportsFromFile = (filePath, srcContext) => {
           if(!chunkName){
             chunkName = childFilePath;
           }
+          dynamicImportsList.set( chunkName , resolvedChildPath );
           fileData["dynamicImports"].push({
             childFilePath: resolvedChildPath,
             chunkName,
@@ -75,23 +76,23 @@ const getImportsFromFile = (filePath, srcContext) => {
   return fileData;
 };
 
-const DFS = (filePath, dependencyGraph, isNodeDone, srcContext) => {
+const DFS = (filePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList) => {
   isNodeDone[filePath] = true;
-  dependencyGraph[filePath] = getImportsFromFile(filePath, srcContext);
+  dependencyGraph[filePath] = getImportsFromFile(filePath, srcContext, dynamicImportsList);
   if (ExcludedPath(filePath)) {
     return;
   }
   // Static Imports
   dependencyGraph[filePath]["staticImports"].forEach(childFile => {
     if(!isNodeDone.hasOwnProperty(childFile)){
-      DFS(childFile, dependencyGraph, isNodeDone, srcContext);
+      DFS(childFile, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
     }
   })
 
   // Dynamic Imports
   dependencyGraph[filePath]["dynamicImports"].forEach(childFile => {
     if(!isNodeDone.hasOwnProperty(childFile.childFilePath)){
-      DFS(childFile.childFilePath, dependencyGraph, isNodeDone, srcContext);
+      DFS(childFile.childFilePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
     }
   })
   return;
@@ -100,11 +101,15 @@ const DFS = (filePath, dependencyGraph, isNodeDone, srcContext) => {
 const buildCompleteDependencyGraph = (entryPath, srcContext) => {
   // const entryPath = getEntryPath();
   const dependencyGraph = {};
+  const dynamicImportsList = new Map();
   const isNodeDone = {};
   isNodeDone[entryPath] = true;
-  DFS(entryPath, dependencyGraph, isNodeDone, srcContext);
-  console.log(dependencyGraph);
-  return dependencyGraph;
+  DFS(entryPath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
+  // console.log(dependencyGraph);
+  return {
+    dependencyGraph,
+    dynamicImportsList
+  };
 };
 // buildCompleteDependencyGraph();
 
