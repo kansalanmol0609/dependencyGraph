@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
-    "@babel/core": "^7.9.6",
-    "enhanced-resolve": "^4.1.1"
+    "@babel/parser": "^7.9.6",
+    "@babel/traverse": "^7.9.6"
   }
 }
