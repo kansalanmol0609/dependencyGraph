@@ -1,16 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const _get = require("lodash/get");
-
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
-
-function getChunkNameFromArgument(arg) {
-	const comment = _get(arg, "leadingComments[0].value");
-	if (comment) {
-		const res = comment.match(/webpackChunkName\s*:\s*"([^."].*)"/);
-		return res ? res[1] : null;
-	}
-}
 
 function getWithExt(pathResolveParams, mainFile) {
 	let ans = path.resolve(...pathResolveParams, mainFile);
@@ -102,13 +92,4 @@ function getFilePath(dir, srcContext, filePath) {
 		: resolveFilePath(filePath, { context: srcContext }); 
 }
 
-const regex = /.js$|.jsx$|.ts$|.tsx$/g;
-
-function isJsFile(filePath) {
-	const ext = path.extname(filePath);
-	return !ext || ext.match(regex);
-}
-
-exports.getChunkNameFromArgument = getChunkNameFromArgument;
 exports.getFilePath = getFilePath;
-exports.isJsFile = isJsFile;

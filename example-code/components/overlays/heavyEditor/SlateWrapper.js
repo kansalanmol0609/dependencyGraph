@@ -1,0 +1,1 @@
+import Slate from 'slate';
