@@ -1,16 +1,31 @@
+var express = require("express");
+var app = express();
 const path = require("path");
-const { dynamicImportsGraph }  = require("./utils/dynamicImportsGraph");
+const { dynamicImportsGraph } = require("./utils/dynamicImportsGraph");
 
-// const entryPath = path.resolve("../covidIndia/src/index.js");
-// const entryPath = path.resolve("../../WebD Projects/Expensify/src/app.js");
-// const entryPath = path.resolve("../StaticAndDynamicImports/src/entry.jsx");
-const entryPath = path.resolve("./example-code/my-entry.js");
+const port = process.env.PORT || 3000;
+const publicDirectoryPath = path.join(__dirname, "./public");
 
-  // const srcContext = path.resolve("../covidIndia/src");
-  // const srcContext = path.resolve("../../WebD Projects/Expensify/src");
-  // const srcContext = path.resolve("../StaticAndDynamicImports/src");
-const srcContext = path.resolve("./example-code");
+app.use(express.static(publicDirectoryPath));
 
-const { nodes, links} = dynamicImportsGraph(entryPath, srcContext);
-console.log(nodes);
-console.log(links);
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname + "/public/index.html"));
+});
+
+app.get("/getChunksdata", (req, res) => {
+  const entryPath = path.resolve("./example-code/my-entry.js");
+  const srcContext = path.resolve("./example-code");
+  //   const { nodes, links } = dynamicImportsGraph(entryPath, srcContext);
+  //   console.log(nodes);
+  //   console.log(links);
+  const data = dynamicImportsGraph(entryPath, srcContext);
+  res.json(data);
+});
+
+app.get("*", (req, res) => {
+  res.send("Error 404");
+});
+
+app.listen(port, function () {
+  console.log("server running on port 3000");
+});
