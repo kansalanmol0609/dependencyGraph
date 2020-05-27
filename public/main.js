@@ -10,3 +10,4 @@ const getData = async () => {
     return jsonData;
 };
 
+console.log(getData());

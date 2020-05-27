@@ -47,9 +47,9 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
         fileData["staticImports"].push(resolvedChildPath);
 			}
     },
-    // Dynamic Imports
     CallExpression(astPath) {
       const callExpNode = astPath.node;
+      // Dynamic Imports
       if (callExpNode.callee.type === "Import") {
         const childFilePath = callExpNode.arguments[0].value;
         if (!isJsFile(childFilePath)) {
@@ -69,6 +69,20 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
             childFilePath: resolvedChildPath,
             chunkName,
           });
+        }
+      }
+      // static imports for require statements
+      else if (callExpNode.callee.name === "require") {
+        const childFilePath = callExpNode.arguments[0].value;
+        if (!isJsFile(childFilePath)) {
+          return;
+        }
+        const resolvedChildPath = getFilePath(dir, srcContext, childFilePath);
+        if (resolvedChildPath) {
+          if (typeof resolvedChildPath !== "string") {
+            debugger;
+          }
+          fileData["staticImports"].push(resolvedChildPath);
         }
       }
     },
