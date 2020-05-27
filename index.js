@@ -15,9 +15,6 @@ app.get("/", (req, res) => {
 app.get("/getChunksdata", (req, res) => {
   const entryPath = path.resolve("./example-code/my-entry.js");
   const srcContext = path.resolve("./example-code");
-  //   const { nodes, links } = dynamicImportsGraph(entryPath, srcContext);
-  //   console.log(nodes);
-  //   console.log(links);
   const data = dynamicImportsGraph(entryPath, srcContext);
   res.json(data);
 });

@@ -1,3 +1,5 @@
 import _ from 'lodash';
 
-import( /* webpackChunkName:"TinySection" */'./TinySection');
+const { var1 } = require("./RightSection");
+
+var1();

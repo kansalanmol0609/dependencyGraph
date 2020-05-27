@@ -8,6 +8,19 @@ const getData = async () => {
   return jsonData;
 };
 
+const selectedNodes = new Set();
+
+const selectDeselectNode = (node) => {
+  if (selectedNodes.has(node.label)) {
+    console.log("Deleting: ", node.label);
+    selectedNodes.delete(node.label);
+  } else {
+    console.log("Adding: ", node.label);
+    selectedNodes.add(node.label);
+  }
+  console.log(selectedNodes);
+};
+
 const plotGraph = async () => {
   const { nodes, links } = await getData();
 
@@ -60,16 +73,16 @@ const plotGraph = async () => {
       return link.id;
     })
     .distance(function (_) {
-        return 150;
+      return 150;
     })
     .strength(function (link) {
       return link.strength;
     });
 
   var simulation = d3
-    .forceSimulation()
+    .forceSimulation(nodes)
     .force("link", linkForce)
-    .force("charge", d3.forceManyBody().strength(-200))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("x", d3.forceX())
     .force("y", d3.forceY());
@@ -94,6 +107,8 @@ const plotGraph = async () => {
     });
 
   function selectNode(selectedNode) {
+    // console.log(this);
+    // console.log(selectedNode.label);
     var neighbors = getNeighbors(selectedNode);
 
     // we modify the styles to highlight selected nodes
@@ -128,6 +143,7 @@ const plotGraph = async () => {
     .attr("r", 10)
     .attr("fill", getNodeColor)
     .call(dragDrop)
+    .on("dblclick", selectDeselectNode)
     .on("click", selectNode);
 
   var textElements = svg
@@ -147,17 +163,17 @@ const plotGraph = async () => {
   simulation.nodes(nodes).on("tick", () => {
     nodeElements
       .attr("cx", function (node) {
-        return node.x;
+        return node.x = Math.max(15, Math.min(width - 15, node.x));
       })
       .attr("cy", function (node) {
-        return node.y;
+        return node.y = Math.max(15, Math.min(height - 15, node.y));
       });
     textElements
       .attr("x", function (node) {
-        return node.x;
+        return node.x = Math.max(15, Math.min(width - 15, node.x));
       })
       .attr("y", function (node) {
-        return node.y;
+        return node.y = Math.max(15, Math.min(height - 15, node.y));
       });
     linkElements
       .attr("x1", function (link) {

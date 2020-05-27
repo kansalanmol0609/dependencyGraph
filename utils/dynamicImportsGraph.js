@@ -9,6 +9,7 @@ const createNodes = (dynamicImportsList) => {
         nodes.push({
             id: entry[0],
             path: entry[1],
+            label: entry[0],
         })
     };
     return nodes;
