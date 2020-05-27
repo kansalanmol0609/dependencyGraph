@@ -18,12 +18,12 @@ function getWithExt(pathResolveParams, mainFile) {
 
 function resolveWithPackageJson(fp, { context, dir }) {
 	const pkgPath = context
-		? path.resolve(process.cwd(), context, fp + "/package.json")
+		? path.resolve(context, fp + "/package.json")
 		: path.resolve(dir, fp + "/package.json");
 	if (fs.existsSync(pkgPath)) {
 		const mainFile = require(pkgPath).main;
 		return context
-			? getWithExt([process.cwd(), context, fp], mainFile)
+			? getWithExt([context, fp], mainFile)
 			: getWithExt([dir, fp], mainFile);
 	}
 	return null;
@@ -31,14 +31,17 @@ function resolveWithPackageJson(fp, { context, dir }) {
 
 function resolveWithExt(fp, ext, { context, dir }) {
 	const fyle = context
-		? path.resolve(  process.cwd(),  context, fp + ext)
+		? path.resolve(context, fp + ext)
 		: path.resolve(dir, fp + ext);
 	return fs.existsSync(fyle) ? fyle : null;
 }
 
+// If using relative paths
+// process.cwd(),
+
 function resolveWithNothing(fp, { context, dir }) {
 	const fyle = context
-		? path.resolve(process.cwd(), context, fp)
+		? path.resolve(context, fp)
 		: path.resolve(dir, fp);
 	return fs.existsSync(fyle) && fs.lstatSync(fyle).isFile() ? fyle : null;
 }
@@ -81,7 +84,6 @@ function resolveFilePath(fp, opts) {
         // console.log("resolveWithNothing: ", ans);
 		return ans;
     }
-    
     // console.log("Unresolved")
 	return null;
 }

@@ -1,1 +1,2 @@
-import MyApp from './MyApp';
+// import MyApp from './MyApp';
+import App2 from 'contextFolder';
