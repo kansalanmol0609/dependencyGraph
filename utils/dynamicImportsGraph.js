@@ -15,20 +15,32 @@ const createNodes = (dynamicImportsList) => {
     return nodes;
 }
 
-const findAllChildChunks = (staticImportPath, dependencyGraph) => {
+const findAllChildChunks = (staticImportPath, dependencyGraph, isNodeDone, visitedNodes) => {
+    //If this node is already visited
+    if(visitedNodes.has(staticImportPath)){
+        return [];
+    }
+    visitedNodes.add(staticImportPath);
+    // If already key present
+    if(isNodeDone.has(staticImportPath)){
+        return isNodeDone.get(staticImportPath);
+    }
     // Dynamic Imports
-    const chunksArray = dependencyGraph[staticImportPath]["dynamicImports"];
+    let chunksArray = dependencyGraph[staticImportPath]["dynamicImports"];
     // Static Imports
     dependencyGraph[staticImportPath]["staticImports"].forEach(staticImport => {
-        chunksArray = chunksArray.concat(findAllChildChunks(staticImport, dependencyGraph));
+        chunksArray = chunksArray.concat(findAllChildChunks(staticImport, dependencyGraph, isNodeDone, visitedNodes));
     })
+    isNodeDone.set(staticImportPath, chunksArray);
     return chunksArray;
 }
 
 // Converting into d3.js format
+// nodes -- list of all dynamic imports
 const createLinks = (nodes, dependencyGraph) => {
     const links = [];
-    // const isNodeDone = new Map();
+    const isNodeDone = new Map();
+    const visitedNodes = new Set();
     nodes.forEach(node => {
         // Dynamic Imports
         dependencyGraph[node.path]["dynamicImports"].forEach(chunk => {
@@ -40,14 +52,15 @@ const createLinks = (nodes, dependencyGraph) => {
         })
         // Static Imports
         dependencyGraph[node.path]["staticImports"].forEach(staticImportPath => {
-            const chunksArray = findAllChildChunks(staticImportPath, dependencyGraph);
+            visitedNodes.clear();
+            const chunksArray = findAllChildChunks(staticImportPath, dependencyGraph, isNodeDone, visitedNodes);
             chunksArray.forEach(chunk => {
                 links.push({
                     source: node.id,
                     target: chunk.chunkName,
                     strength: 0.5
                 });
-            })
+            });
         })
     })
     return links;

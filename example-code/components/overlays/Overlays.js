@@ -1,4 +1,5 @@
 import React from 'react';
+import MyApp from '../../MyApp';
 
 import(/* webpackChunkName:"HeavyReloginModal" */'components/overlays/HeavyReloginModal');
 import(/* webpackChunkName:"HeavyEditor" */'./heavyEditor/HeavyEditor');
