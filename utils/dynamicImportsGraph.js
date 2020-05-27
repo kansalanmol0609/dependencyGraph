@@ -44,7 +44,7 @@ const createLinks = (nodes, dependencyGraph) => {
                 links.push({
                     source: node.id,
                     target: chunk.chunkName,
-                    strength: 1
+                    strength: 0.5
                 });
             })
         })
