@@ -194,3 +194,13 @@ const plotGraph = async () => {
 };
 
 plotGraph();
+
+document.getElementById("recomputeDepGraph").addEventListener('click', async (_) => {
+    const URL = `${window.location.href}deleteComputedGraph`;
+    const response = await fetch(URL);
+    if(response.status === 200){
+      location.reload();
+    }else{
+      console.log("Error Occurred!");
+    }
+});
