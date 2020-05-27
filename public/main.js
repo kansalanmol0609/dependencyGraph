@@ -60,14 +60,16 @@ const plotGraph = async () => {
   }
 
   // Getting Container to be ready
-  var width = 960;
-  var height = 600;
+  // let width = window.innerWidth;
+  // let height = window.innerHeight;
+  let width = (nodes.length*100);
+  let height = (nodes.length*100);
 
-  var svg = d3.select("svg");
+  let svg = d3.select("svg");
   svg.attr("width", width).attr("height", height);
 
   // simulation setup with all forces
-  var linkForce = d3
+  let linkForce = d3
     .forceLink()
     .id(function (link) {
       return link.id;
@@ -79,15 +81,15 @@ const plotGraph = async () => {
       return link.strength;
     });
 
-  var simulation = d3
+  let simulation = d3
     .forceSimulation(nodes)
     .force("link", linkForce)
-    .force("charge", d3.forceManyBody().strength(-500))
+    .force("charge", d3.forceManyBody().strength(-2000))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("x", d3.forceX())
     .force("y", d3.forceY());
 
-  var dragDrop = d3
+  let dragDrop = d3
     .drag()
     .on("start", function (node) {
       node.fx = node.x;
@@ -109,7 +111,7 @@ const plotGraph = async () => {
   function selectNode(selectedNode) {
     // console.log(this);
     // console.log(selectedNode.label);
-    var neighbors = getNeighbors(selectedNode);
+    let neighbors = getNeighbors(selectedNode);
 
     // we modify the styles to highlight selected nodes
     nodeElements.attr("fill", function (node) {
@@ -123,7 +125,23 @@ const plotGraph = async () => {
     });
   }
 
-  var linkElements = svg
+  svg
+    .append("svg:defs")
+    .selectAll("marker")
+    .data(["end"]) // Different link/path types can be defined here
+    .enter()
+    .append("svg:marker") // This section adds in the arrows
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+
+  let linkElements = svg
     .append("g")
     .attr("class", "links")
     .selectAll("line")
@@ -131,9 +149,10 @@ const plotGraph = async () => {
     .enter()
     .append("line")
     .attr("stroke-width", 2)
-    .attr("stroke", "black");
+    .attr("stroke", "black")
+    .attr("marker-end", "url(#end)");
 
-  var nodeElements = svg
+  let nodeElements = svg
     .append("g")
     .attr("class", "nodes")
     .selectAll("circle")
@@ -142,11 +161,11 @@ const plotGraph = async () => {
     .append("circle")
     .attr("r", 10)
     .attr("fill", getNodeColor)
-    .call(dragDrop)
+    // .call(dragDrop)
     .on("dblclick", selectDeselectNode)
     .on("click", selectNode);
 
-  var textElements = svg
+  let textElements = svg
     .append("g")
     .attr("class", "texts")
     .selectAll("text")
@@ -163,17 +182,17 @@ const plotGraph = async () => {
   simulation.nodes(nodes).on("tick", () => {
     nodeElements
       .attr("cx", function (node) {
-        return node.x = Math.max(15, Math.min(width - 15, node.x));
+        return (node.x = Math.max(15, Math.min(width - 15, node.x)));
       })
       .attr("cy", function (node) {
-        return node.y = Math.max(15, Math.min(height - 15, node.y));
+        return (node.y = Math.max(15, Math.min(height - 15, node.y)));
       });
     textElements
       .attr("x", function (node) {
-        return node.x = Math.max(15, Math.min(width - 15, node.x));
+        return (node.x = Math.max(15, Math.min(width - 15, node.x)));
       })
       .attr("y", function (node) {
-        return node.y = Math.max(15, Math.min(height - 15, node.y));
+        return (node.y = Math.max(15, Math.min(height - 15, node.y)));
       });
     linkElements
       .attr("x1", function (link) {
@@ -195,12 +214,14 @@ const plotGraph = async () => {
 
 plotGraph();
 
-document.getElementById("recomputeDepGraph").addEventListener('click', async (_) => {
+document
+  .getElementById("recomputeDepGraph")
+  .addEventListener("click", async (_) => {
     const URL = `${window.location.href}deleteComputedGraph`;
     const response = await fetch(URL);
-    if(response.status === 200){
+    if (response.status === 200) {
       location.reload();
-    }else{
+    } else {
       console.log("Error Occurred!");
     }
-});
+  });
