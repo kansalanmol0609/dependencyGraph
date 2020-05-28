@@ -12,7 +12,7 @@ const getAndSaveData = () => {
   const srcContext = path.resolve("./example-code");
   const data = dynamicImportsGraph(entryPath, srcContext);
   const jsonContent = JSON.stringify(data);
-  console.log(jsonContent);
+  // console.log(jsonContent);
   fs.writeFileSync("cache.json", jsonContent, "utf8", function (err) {
     if (err) {
       throw Error("An error occured while saving JSON File.");

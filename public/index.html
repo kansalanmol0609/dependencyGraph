@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"> 
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./style.css" />
     <title>Chunks Dependency Graph</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Chunks Dependency Graph</h1>
     <div>
-        <button id="recomputeDepGraph">Recompute Dependency Graph</button>
+      <button id="recomputeDepGraph">Recompute Dependency Graph</button>
     </div>
-    <div style="width: 90vw; height: 80vh; overflow-x: scroll; overflow-y: scroll; ">
-        <svg ></svg>
-    </div>
-    <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+    <form onsubmit="return false;">
+      <input type="text" autocomplete="off" list="browsers" name="browser" id="inputChunk" placeholder="Select Chunk" />
+      <datalist id="browsers">
+      </datalist>
+    </form>
+    <div
+      id="svgDiv"
+    ></div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="main.js"></script>
-</body>
+  </body>
 </html>

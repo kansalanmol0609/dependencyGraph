@@ -11,209 +11,269 @@ const getData = async () => {
 const selectedNodes = new Set();
 
 const selectDeselectNode = (node) => {
-  if (selectedNodes.has(node.label)) {
-    console.log("Deleting: ", node.label);
-    selectedNodes.delete(node.label);
+  if (selectedNodes.has(node)) {
+    console.log("Deleting: ", node);
+    selectedNodes.delete(node);
   } else {
-    console.log("Adding: ", node.label);
-    selectedNodes.add(node.label);
+    console.log("Adding: ", node);
+    selectedNodes.add(node);
   }
   console.log(selectedNodes);
 };
 
-const plotGraph = async () => {
-  const { nodes, links } = await getData();
+const plotTree = (treeData) => {
+  
+  var levelWidth = [1];
+  var childCount = function (level, n) {
+    if (n.children && n.children.length > 0) {
+      if (levelWidth.length <= level + 1) levelWidth.push(0);
 
-  function getNeighbors(node) {
-    return links.reduce(
-      function (neighbors, link) {
-        if (link.target.id === node.id) {
-          neighbors.push(link.source.id);
-        } else if (link.source.id === node.id) {
-          neighbors.push(link.target.id);
-        }
-        return neighbors;
-      },
-      [node.id]
-    );
-  }
-
-  function isNeighborLink(node, link) {
-    return link.target.id === node.id || link.source.id === node.id;
-  }
-
-  function getNodeColor(node, neighbors) {
-    if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
-      return "green";
+      levelWidth[level + 1] += n.children.length;
+      n.children.forEach(function (d) {
+        childCount(level + 1, d);
+      });
     }
-    return "red";
-  }
+  };
+  childCount(0, treeData);
+  let height = Math.max(500, d3.max(levelWidth) * 13); // 20 pixels per line
+  let width = Math.max(900, levelWidth.length*150);
 
-  function getLinkColor(node, link) {
-    return isNeighborLink(node, link) ? "green" : "black";
-  }
+  console.log("Height: ", height, d3.max(levelWidth));
+  console.log("Width: ", width, levelWidth.length);
+  // console.log();
+  // tree = tree.size([newHeight, w]);
 
-  function getTextColor(node, neighbors) {
-    return Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1
-      ? "green"
-      : "black";
-  }
+  // Clear Previous SVG
+  document.getElementById("svgDiv").innerHTML = null;
+  // Set the dimensions and margins of the diagram
+  let margin = { top: 20, right: 90, bottom: 30, left: 90 };
+    // width = 960 - margin.left - margin.right;
+    // height = 500 - margin.top - margin.bottom;
 
-  // Getting Container to be ready
-  // let width = window.innerWidth;
-  // let height = window.innerHeight;
-  let width = (nodes.length*100);
-  let height = (nodes.length*100);
-
-  let svg = d3.select("svg");
-  svg.attr("width", width).attr("height", height);
-
-  // simulation setup with all forces
-  let linkForce = d3
-    .forceLink()
-    .id(function (link) {
-      return link.id;
-    })
-    .distance(function (_) {
-      return 150;
-    })
-    .strength(function (link) {
-      return link.strength;
-    });
-
-  let simulation = d3
-    .forceSimulation(nodes)
-    .force("link", linkForce)
-    .force("charge", d3.forceManyBody().strength(-2000))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("x", d3.forceX())
-    .force("y", d3.forceY());
-
-  let dragDrop = d3
-    .drag()
-    .on("start", function (node) {
-      node.fx = node.x;
-      node.fy = node.y;
-    })
-    .on("drag", function (node) {
-      simulation.alphaTarget(0.7).restart();
-      node.fx = d3.event.x;
-      node.fy = d3.event.y;
-    })
-    .on("end", function (node) {
-      if (!d3.event.active) {
-        simulation.alphaTarget(0);
-      }
-      node.fx = null;
-      node.fy = null;
-    });
-
-  function selectNode(selectedNode) {
-    // console.log(this);
-    // console.log(selectedNode.label);
-    let neighbors = getNeighbors(selectedNode);
-
-    // we modify the styles to highlight selected nodes
-    nodeElements.attr("fill", function (node) {
-      return getNodeColor(node, neighbors);
-    });
-    textElements.attr("fill", function (node) {
-      return getTextColor(node, neighbors);
-    });
-    linkElements.attr("stroke", function (link) {
-      return getLinkColor(selectedNode, link);
-    });
-  }
-
-  svg
-    .append("svg:defs")
-    .selectAll("marker")
-    .data(["end"]) // Different link/path types can be defined here
-    .enter()
-    .append("svg:marker") // This section adds in the arrows
-    .attr("id", String)
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 15)
-    .attr("refY", -1.5)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5");
-
-  let linkElements = svg
+  // append the svg object to the body of the page
+  // appends a 'group' element to 'svg'
+  // moves the 'group' element to the top left margin
+  let svg = d3
+    .select("#svgDiv")
+    .append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("class", "links")
-    .selectAll("line")
-    .data(links)
-    .enter()
-    .append("line")
-    .attr("stroke-width", 2)
-    .attr("stroke", "black")
-    .attr("marker-end", "url(#end)");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  let nodeElements = svg
-    .append("g")
-    .attr("class", "nodes")
-    .selectAll("circle")
-    .data(nodes)
-    .enter()
-    .append("circle")
-    .attr("r", 10)
-    .attr("fill", getNodeColor)
-    // .call(dragDrop)
-    .on("dblclick", selectDeselectNode)
-    .on("click", selectNode);
+  let i = 0,
+    duration = 750,
+    root;
 
-  let textElements = svg
-    .append("g")
-    .attr("class", "texts")
-    .selectAll("text")
-    .data(nodes)
-    .enter()
-    .append("text")
-    .text(function (node) {
-      return node.id;
-    })
-    .attr("font-size", 15)
-    .attr("dx", 15)
-    .attr("dy", 4);
+  // declares a tree layout and assigns the size
+  let treemap = d3.tree().size([height, width]);
 
-  simulation.nodes(nodes).on("tick", () => {
-    nodeElements
-      .attr("cx", function (node) {
-        return (node.x = Math.max(15, Math.min(width - 15, node.x)));
-      })
-      .attr("cy", function (node) {
-        return (node.y = Math.max(15, Math.min(height - 15, node.y)));
-      });
-    textElements
-      .attr("x", function (node) {
-        return (node.x = Math.max(15, Math.min(width - 15, node.x)));
-      })
-      .attr("y", function (node) {
-        return (node.y = Math.max(15, Math.min(height - 15, node.y)));
-      });
-    linkElements
-      .attr("x1", function (link) {
-        return link.source.x;
-      })
-      .attr("y1", function (link) {
-        return link.source.y;
-      })
-      .attr("x2", function (link) {
-        return link.target.x;
-      })
-      .attr("y2", function (link) {
-        return link.target.y;
-      });
+  // Assigns parent, children, height, depth
+  // Constructs a root node from the specified hierarchical data
+  root = d3.hierarchy(treeData, function (d) {
+    return d.children;
   });
+  root.x0 = height / 2;
+  root.y0 = 0;
 
-  simulation.force("link").links(links);
+  update(root);
+
+  function update(source) {
+    // Assigns the x and y position for the nodes
+    let treeData = treemap(root);
+
+    // Compute the new tree layout.
+    let nodes = treeData.descendants(),
+      links = treeData.descendants().slice(1);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function (d) {
+      d.y = d.depth * 150;
+    });
+
+    // ****************** Nodes section ***************************
+
+    // Update the nodes...
+    let node = svg.selectAll("g.node").data(nodes, function (d) {
+      return d.id || (d.id = ++i);
+    });
+
+    // Enter any new modes at the parent's previous position.
+    let nodeEnter = node
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .attr("transform", function (d) {
+        return "translate(" + source.y0 + "," + source.x0 + ")";
+      })
+      .on("click", click);
+
+    // Add Circle for the nodes
+    nodeEnter
+      .append("circle")
+      .attr("class", "node")
+      .attr("r", 1e-9)
+      .style("fill", function (d) {
+        return d.children ? "lightsteelblue" : "white";
+      });
+
+    // Add labels for the nodes
+    nodeEnter
+      .append("text")
+      .attr("dy", ".35em")
+      .attr("x", function (d) {
+        return d.children || d._children ? -13 : 13;
+      })
+      .attr("text-anchor", function (d) {
+        return d.children || d._children ? "end" : "start";
+      })
+      .text(function (d) {
+        return d.data.name;
+      });
+
+    // UPDATE
+    let nodeUpdate = nodeEnter.merge(node);
+
+    // Transition to the proper position for the node
+    nodeUpdate
+      .transition()
+      .duration(duration)
+      .attr("transform", function (d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      });
+
+    // Update the node attributes and style
+    nodeUpdate
+      .select("circle.node")
+      .attr("r", 5)
+      .style("fill", function (d) {
+        return d.data.repeated ? "red" : "white";
+      })
+      .attr("cursor", "pointer");
+
+    // ****************** links section ***************************
+
+    // Update the links...
+    let link = svg.selectAll("path.link").data(links, function (d) {
+      return d.id;
+    });
+
+    // Enter any new links at the parent's previous position.
+    let linkEnter = link
+      .enter()
+      .insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function (d) {
+        let o = { x: source.x0, y: source.y0 };
+        return diagonal(o, o);
+      });
+
+    // UPDATE
+    let linkUpdate = linkEnter.merge(link);
+
+    // Transition back to the parent element position
+    linkUpdate
+      .transition()
+      .duration(duration)
+      .attr("d", function (d) {
+        return diagonal(d, d.parent);
+      });
+
+    // Store the old positions for transition.
+    nodes.forEach(function (d) {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+
+    // Creates a curved (diagonal) path from parent to the child nodes
+    function diagonal(s, d) {
+      path = `M ${s.y} ${s.x}
+            C ${(s.y + d.y) / 2} ${s.x},
+              ${(s.y + d.y) / 2} ${d.x},
+              ${d.y} ${d.x}`;
+
+      return path;
+    }
+
+    // Toggle children on click.
+    function click(d) {
+      selectDeselectNode(d.data.name);
+    }
+  }
+};
+
+let nodes = [];
+let chunksGraph = {};
+
+const plotGraph = async () => {
+  if (nodes.length === 0) {
+    let data = await getData();
+    nodes = data.nodes;
+    chunksGraph = data.chunksGraph;
+    // Select Chunk
+    let chunkSelectEl = document.getElementById("browsers");
+    nodes.forEach((node) => {
+      let option = document.createElement("option");
+      option.setAttribute("value", node.label);
+      chunkSelectEl.appendChild(option);
+    });
+  }
 };
 
 plotGraph();
 
+const createTreeFormat = (rootChunk, isNodeDone) => {
+  isNodeDone.set(rootChunk, true);
+  let tmpObj = {};
+  tmpObj["name"] = rootChunk;
+  tmpObj["children"] = [];
+  chunksGraph[rootChunk].forEach((child) => {
+    if (!isNodeDone.has(child.name)) {
+      tmpObj["children"].push(createTreeFormat(child.name, isNodeDone));
+    } else {
+      tmpObj["children"].push({
+        name: child.name,
+        children: [],
+        repeated: true,
+      });
+    }
+  });
+  return tmpObj;
+};
+
+// const dummyData = (level, currLevel = 1) => {
+//   let tmpObj = [];
+//   // console.log("Hi")
+//   if (level != 0) {
+//     for (let i = 0; i < currLevel; i++) {
+//       tmpObj.push({
+//         name: "Thor",
+//         children: dummyData(level - 1, currLevel+1 ),
+//       });
+//     }
+//   }
+//   return tmpObj;
+// };
+
+// console.log(dummyData(6)[0]);
+// plotTree(dummyData(6)[0]);
+
+let a = document.getElementsByName("browser")[0];
+a.addEventListener("change", function (e) {
+  let rootChunk = this.value;
+  e.preventDefault();
+  if (chunksGraph.hasOwnProperty(rootChunk)) {
+    let isNodeDone = new Map();
+    let treeData = createTreeFormat(rootChunk, isNodeDone);
+    console.log(treeData);
+    plotTree(treeData);
+  } else {
+    console.log("Invalid Option!");
+    document.getElementById("inputChunk").value = "";
+  }
+});
+
+// Force Recompute Dependency Graph
 document
   .getElementById("recomputeDepGraph")
   .addEventListener("click", async (_) => {

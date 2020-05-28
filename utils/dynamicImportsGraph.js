@@ -37,17 +37,18 @@ const findAllChildChunks = (staticImportPath, dependencyGraph, isNodeDone, visit
 
 // Converting into d3.js format
 // nodes -- list of all dynamic imports
-const createLinks = (nodes, dependencyGraph) => {
-    const links = [];
+const createChunksGraph = (nodes, dependencyGraph, chunksGraph) => {
+    // const links = [];
     const isNodeDone = new Map();
     const visitedNodes = new Set();
+    // For every chunk
     nodes.forEach(node => {
+        chunksGraph[node.id] = [];
         // Dynamic Imports
         dependencyGraph[node.path]["dynamicImports"].forEach(chunk => {
-            links.push({
-                source: node.id,
-                target: chunk.chunkName,
-                strength: 1
+            chunksGraph[node.id].push({
+                name: chunk.chunkName,
+                path: chunk.childFilePath,
             });
         })
         // Static Imports
@@ -55,15 +56,13 @@ const createLinks = (nodes, dependencyGraph) => {
             visitedNodes.clear();
             const chunksArray = findAllChildChunks(staticImportPath, dependencyGraph, isNodeDone, visitedNodes);
             chunksArray.forEach(chunk => {
-                links.push({
-                    source: node.id,
-                    target: chunk.chunkName,
-                    strength: 0.5
+                chunksGraph[node.id].push({
+                    name: chunk.chunkName,
+                    path: chunk.childFilePath,
                 });
             });
         })
     })
-    return links;
 }
 
 const dynamicImportsGraph = (entryPath, srcContext) => {
@@ -71,10 +70,12 @@ const dynamicImportsGraph = (entryPath, srcContext) => {
     console.log(dynamicImportsList);
     console.log(dependencyGraph);
     const nodes = createNodes(dynamicImportsList);
-    const links = createLinks(nodes, dependencyGraph);
+    const chunksGraph = {};
+    createChunksGraph(nodes, dependencyGraph, chunksGraph);
+    console.log(nodes, chunksGraph);
     return {
         nodes,
-        links,
+        chunksGraph,
     }
 }
 
