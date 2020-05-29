@@ -1,10 +1,10 @@
-console.log("From JS file!");
-
 const getData = async () => {
   const URL = `${window.location.href}getChunksdata`;
   const response = await fetch(URL);
   const jsonData = await response.json();
   console.log(jsonData);
+  document.querySelector(".heading__load").style.display = "none";
+  document.querySelector(".heading__options").style.display = "flex";
   return jsonData;
 };
 
@@ -38,21 +38,13 @@ const plotTree = (treeData) => {
   let height = Math.max(500, d3.max(levelWidth) * 13); // 20 pixels per line
   let width = Math.max(900, levelWidth.length*150);
 
-  console.log("Height: ", height, d3.max(levelWidth));
-  console.log("Width: ", width, levelWidth.length);
-  // console.log();
-  // tree = tree.size([newHeight, w]);
-
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
   // Set the dimensions and margins of the diagram
   let margin = { top: 20, right: 90, bottom: 30, left: 90 };
-    // width = 960 - margin.left - margin.right;
-    // height = 500 - margin.top - margin.bottom;
+    width = width - margin.left - margin.right;
+    height = height - margin.top - margin.bottom;
 
-  // append the svg object to the body of the page
-  // appends a 'group' element to 'svg'
-  // moves the 'group' element to the top left margin
   let svg = d3
     .select("#svgDiv")
     .append("svg")
@@ -205,7 +197,7 @@ const plotTree = (treeData) => {
 let nodes = [];
 let chunksGraph = {};
 
-const plotGraph = async () => {
+const initialize = async () => {
   if (nodes.length === 0) {
     let data = await getData();
     nodes = data.nodes;
@@ -220,7 +212,7 @@ const plotGraph = async () => {
   }
 };
 
-plotGraph();
+initialize();
 
 const createTreeFormat = (rootChunk, isNodeDone) => {
   isNodeDone.set(rootChunk, true);
@@ -241,23 +233,6 @@ const createTreeFormat = (rootChunk, isNodeDone) => {
   return tmpObj;
 };
 
-// const dummyData = (level, currLevel = 1) => {
-//   let tmpObj = [];
-//   // console.log("Hi")
-//   if (level != 0) {
-//     for (let i = 0; i < currLevel; i++) {
-//       tmpObj.push({
-//         name: "Thor",
-//         children: dummyData(level - 1, currLevel+1 ),
-//       });
-//     }
-//   }
-//   return tmpObj;
-// };
-
-// console.log(dummyData(6)[0]);
-// plotTree(dummyData(6)[0]);
-
 let a = document.getElementsByName("browser")[0];
 a.addEventListener("change", function (e) {
   let rootChunk = this.value;
@@ -265,7 +240,6 @@ a.addEventListener("change", function (e) {
   if (chunksGraph.hasOwnProperty(rootChunk)) {
     let isNodeDone = new Map();
     let treeData = createTreeFormat(rootChunk, isNodeDone);
-    console.log(treeData);
     plotTree(treeData);
   } else {
     console.log("Invalid Option!");

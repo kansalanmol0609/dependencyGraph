@@ -12,7 +12,6 @@ const getAndSaveData = () => {
   const srcContext = path.resolve("./example-code");
   const data = dynamicImportsGraph(entryPath, srcContext);
   const jsonContent = JSON.stringify(data);
-  // console.log(jsonContent);
   fs.writeFileSync("cache.json", jsonContent, "utf8", function (err) {
     if (err) {
       throw Error("An error occured while saving JSON File.");
@@ -49,7 +48,6 @@ app.get("/deleteComputedGraph", (_, res) => {
     delete require.cache[require.resolve('./cache.json')];
     console.log("Deleted!")
     res.send("Done Successfully!");
-    //file removed
   } 
   catch(err) {
     console.error("Error: ",err)

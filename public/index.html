@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./style.css" />
+    <meta charset="UTF-8" />  
     <title>Chunks Dependency Graph</title>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1>Chunks Dependency Graph</h1>
-    <div>
-      <button id="recomputeDepGraph">Recompute Dependency Graph</button>
+    <div class="heading">
+      <h1 class="heading__header">Chunks Dependency Graph</h1>
+      <div class="heading__load">
+        <div class="heading__loading">
+        </div>
+        <div class="heading__text">Loading...</div>
+      </div>
+      <div class="heading__options">
+        <div class="heading__search">
+          <input
+          type="text"
+          autocomplete="off"
+          list="browsers"
+          name="browser"
+          id="inputChunk"
+          placeholder="Select Root Chunk"
+        />
+        <datalist id="browsers"> </datalist>
+        </div>
+        <button class="heading__button" id="recomputeDepGraph">
+          Recompute Graph
+        </button>
+      </div>
     </div>
-    <form onsubmit="return false;">
-      <input type="text" autocomplete="off" list="browsers" name="browser" id="inputChunk" placeholder="Select Chunk" />
-      <datalist id="browsers">
-      </datalist>
-    </form>
-    <div
-      id="svgDiv"
-    ></div>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <div class="content">
+      <div id="svgDiv"></div>
+    </div>
+    <script src="d3.v4.min.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

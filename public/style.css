@@ -1,15 +1,130 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 950px;
+  display: flex;
+  flex-flow: column;
+  min-height: 100vh;
+  border: 5px solid steelblue;
+}
+
+.heading {
+  margin: 0;
+  min-width: 950px;
+  background-color: steelblue;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heading__options {
+  display: none;
+  flex-direction: row;
+}
+
+.heading__load {
+  display: flex;
+  flex-direction: row;
+}
+
+.heading__text {
+  margin-left: 1vw;
+  margin-right: 5vw;
+  font-size: 2rem;
+  color: white;
+  font-weight: 800;
+}
+
+.heading__header {
+  margin-left: 5vw;
+  font-size: 2.3rem;
+  color: white;
+}
+
+.heading__button {
+  margin-right: 5vw;
+  border-radius: 5px;
+  font-size: 1.05rem;
+  background: #007bff;
+  color: white;
+  border: 1px #0078e7 solid;
+  padding: 0.5vw;
+  padding-left: 1.5vw;
+  padding-right: 1.5vw;
+}
+
+.heading__button:hover {
+  cursor: pointer;
+}
+
+.heading__search {
+  margin-right: 5vw;
+}
+
+#inputChunk {
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  color: steelblue;
+  border: 2px skyblue solid;
+  padding: 0.5vw;
+}
+
+.content {
+  margin: 0;
+  overflow-x: scroll;
+  flex-grow: 1;
+  padding-left: 90px;
+  padding-right: 90px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
+
 .node circle {
-    fill: #fff;
-    stroke: steelblue;
-    stroke-width: 3px;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.heading__loading {
+  border: 5px solid white;
+  border-radius: 50%;
+  border-top: 5px solid skyblue;
+  width: 2vw;
+  height: 2vw;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
   }
-  
-  .node text {
-    font: 12px sans-serif;
+  100% {
+    -webkit-transform: rotate(360deg);
   }
-  
-  .link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 2px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+::placeholder {
+  color: steelblue;
+}

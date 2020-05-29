@@ -4,7 +4,6 @@ const { buildCompleteDependencyGraph }  = require("./buildDependencyGraph");
 const createNodes = (dynamicImportsList) => {
     const nodes = [];
     const dynamicImportsListArray = dynamicImportsList.entries();
-    // console.log(dynamicImportsListArray);
     for(entry of dynamicImportsListArray){
         nodes.push({
             id: entry[0],
@@ -35,10 +34,8 @@ const findAllChildChunks = (staticImportPath, dependencyGraph, isNodeDone, visit
     return chunksArray;
 }
 
-// Converting into d3.js format
 // nodes -- list of all dynamic imports
 const createChunksGraph = (nodes, dependencyGraph, chunksGraph) => {
-    // const links = [];
     const isNodeDone = new Map();
     const visitedNodes = new Set();
     // For every chunk
@@ -67,12 +64,10 @@ const createChunksGraph = (nodes, dependencyGraph, chunksGraph) => {
 
 const dynamicImportsGraph = (entryPath, srcContext) => {
     const { dynamicImportsList, dependencyGraph} = buildCompleteDependencyGraph(entryPath, srcContext);
-    console.log(dynamicImportsList);
     console.log(dependencyGraph);
     const nodes = createNodes(dynamicImportsList);
     const chunksGraph = {};
     createChunksGraph(nodes, dependencyGraph, chunksGraph);
-    console.log(nodes, chunksGraph);
     return {
         nodes,
         chunksGraph,
