@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />  
+    <meta charset="UTF-8" />
     <title>Chunks Dependency Graph</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
@@ -9,30 +9,34 @@
     <div class="heading">
       <h1 class="heading__header">Chunks Dependency Graph</h1>
       <div class="heading__load">
-        <div class="heading__loading">
-        </div>
+        <div class="heading__loading"></div>
         <div class="heading__text">Loading...</div>
       </div>
       <div class="heading__options">
         <div class="heading__search">
           <input
-          type="text"
-          autocomplete="off"
-          list="browsers"
-          name="browser"
-          id="inputChunk"
-          placeholder="Select Root Chunk"
-        />
-        <datalist id="browsers"> </datalist>
+            type="text"
+            autocomplete="off"
+            list="browsers"
+            name="browser"
+            id="inputChunk"
+            placeholder="Select Root Chunk"
+          />
+          <datalist id="browsers"> </datalist>
         </div>
         <button class="heading__button" id="recomputeDepGraph">
           Recompute Graph
         </button>
       </div>
     </div>
+    <div class="selectedChunks">
+      <button class="selectedChunks__button" id="selectedChunksButton">Copy</button>
+      <div class="selectedChunks__list" id="selectedChunksList">No Chunk Selected!</div>
+    </div>
     <div class="content">
       <div id="svgDiv"></div>
     </div>
+    <div class="toast"></div>
     <script src="d3.v4.min.js"></script>
     <script src="main.js"></script>
   </body>

@@ -5,24 +5,48 @@ const getData = async () => {
   console.log(jsonData);
   document.querySelector(".heading__load").style.display = "none";
   document.querySelector(".heading__options").style.display = "flex";
+  document.querySelector(".selectedChunks").style.display = "flex";
   return jsonData;
+};
+
+const createToastAlert = (content) => {
+  const pEl = document.createElement("p");
+  pEl.textContent = content;
+  pEl.className = "toast__message";
+  document.querySelector(".toast").appendChild(pEl);
+  setTimeout(function () {
+    pEl.remove();
+  }, 3000);
 };
 
 const selectedNodes = new Set();
 
 const selectDeselectNode = (node) => {
   if (selectedNodes.has(node)) {
-    console.log("Deleting: ", node);
+    createToastAlert(`Deleting: ${node}`);
     selectedNodes.delete(node);
   } else {
-    console.log("Adding: ", node);
+    createToastAlert(`Adding: ${node}`);
     selectedNodes.add(node);
   }
+  renderList();
   console.log(selectedNodes);
 };
 
+const renderList = () => {
+  const divEl = document.getElementById("selectedChunksList");
+  let str = "";
+  selectedNodes.forEach((node) => {
+    str += `,${node}`;
+  });
+  if (str) {
+    divEl.textContent = str.substr(1);
+  } else {
+    divEl.textContent = "No Chunk Selected!";
+  }
+};
+
 const plotTree = (treeData) => {
-  
   var levelWidth = [1];
   var childCount = function (level, n) {
     if (n.children && n.children.length > 0) {
@@ -36,14 +60,14 @@ const plotTree = (treeData) => {
   };
   childCount(0, treeData);
   let height = Math.max(500, d3.max(levelWidth) * 13); // 20 pixels per line
-  let width = Math.max(900, levelWidth.length*150);
+  let width = Math.max(900, levelWidth.length * 150);
 
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
   // Set the dimensions and margins of the diagram
   let margin = { top: 20, right: 90, bottom: 30, left: 90 };
-    width = width - margin.left - margin.right;
-    height = height - margin.top - margin.bottom;
+  width = width - margin.left - margin.right;
+  height = height - margin.top - margin.bottom;
 
   let svg = d3
     .select("#svgDiv")
@@ -258,4 +282,17 @@ document
     } else {
       console.log("Error Occurred!");
     }
+  });
+
+// Copy Button
+document
+  .getElementById("selectedChunksButton")
+  .addEventListener("click", () => {
+    let dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = document.getElementById("selectedChunksList").textContent;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+    createToastAlert("Copied to Clipboard!");
   });

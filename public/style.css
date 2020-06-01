@@ -128,3 +128,106 @@ body {
 ::placeholder {
   color: steelblue;
 }
+
+.toast {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.toast__message {
+  background-color: steelblue;
+  color: white;
+  margin: 0;
+  padding: 0;
+  min-width: 300px;
+  text-align: center;
+  font-size: 1.1rem;
+  height: 40px;
+  line-height: 40px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+.selectedChunks {
+  display: none;
+  flex-direction: row;
+  width: 98%;
+  min-height: 40px;
+  padding: 10px;
+}
+
+.selectedChunks__button {
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: steelblue;
+  color: white;
+  border: 1px #0078e7 solid;
+  padding: 0.5vw;
+  padding-left: 1.5vw;
+  padding-right: 1.5vw;
+  height: 40px;
+}
+.selectedChunks__list{
+  border: 1px steelblue solid;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 40px;
+  margin-left: 10px;
+  color: steelblue;
+  flex-grow: 1;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+input::-webkit-calendar-picker-indicator {
+	display: none;
+}
