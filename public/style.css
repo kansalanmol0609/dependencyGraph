@@ -228,6 +228,16 @@ body {
   padding-right: 6px;
 }
 
+.selectedChunks__list__item{
+  margin: 0;
+  margin-left: 10px;
+  display: inline;
+}
+
+.selectedChunks__list__item:hover{
+  cursor: pointer;
+}
+
 input::-webkit-calendar-picker-indicator {
 	display: none;
 }

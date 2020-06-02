@@ -25,6 +25,7 @@ const selectDeselectNode = (node) => {
   if (selectedNodes.has(node)) {
     createToastAlert(`Deleting: ${node}`);
     selectedNodes.delete(node);
+    // update(root);
   } else {
     createToastAlert(`Adding: ${node}`);
     selectedNodes.add(node);
@@ -33,14 +34,27 @@ const selectDeselectNode = (node) => {
   console.log(selectedNodes);
 };
 
-const renderList = () => {
-  const divEl = document.getElementById("selectedChunksList");
+const getSelectedChunkText = () => {
   let str = "";
   selectedNodes.forEach((node) => {
     str += `,${node}`;
   });
   if (str) {
-    divEl.textContent = str.substr(1);
+    return str.substr(1);
+  }
+  return str;
+};
+
+const renderList = () => {
+  const divEl = document.getElementById("selectedChunksList");
+  divEl.innerHTML = null;
+  if (selectedNodes.size) {
+    selectedNodes.forEach((node) => {
+      const pEl = document.createElement("p");
+      pEl.textContent = `${node}`;
+      pEl.className = "selectedChunks__list__item";
+      divEl.appendChild(pEl);
+    });
   } else {
     divEl.textContent = "No Chunk Selected!";
   }
@@ -77,7 +91,7 @@ const plotTree = (treeData) => {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  let i = 0,
+  var i = 0,
     duration = 750,
     root;
 
@@ -163,7 +177,12 @@ const plotTree = (treeData) => {
       .select("circle.node")
       .attr("r", 5)
       .style("fill", function (d) {
-        return d.data.repeated ? "red" : "white";
+        console.log(d.data.name)
+        if(selectedNodes.has(d.data.name)){
+          return "#FFEB3B";
+        }else{
+          return d.data.repeated ? "red" : "white";
+        }
       })
       .attr("cursor", "pointer");
 
@@ -214,6 +233,7 @@ const plotTree = (treeData) => {
     // Toggle children on click.
     function click(d) {
       selectDeselectNode(d.data.name);
+      update(root);
     }
   }
 };
@@ -246,7 +266,7 @@ const createTreeFormat = (rootChunk, isNodeDone) => {
   chunksGraph[rootChunk].forEach((child) => {
     if (!isNodeDone.has(child.name)) {
       tmpObj["children"].push(createTreeFormat(child.name, isNodeDone));
-    } else{
+    } else {
       tmpObj["children"].push({
         name: child.name,
         children: [],
@@ -290,9 +310,24 @@ document
   .addEventListener("click", () => {
     let dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
-    dummy.value = document.getElementById("selectedChunksList").textContent;
+    dummy.value = getSelectedChunkText();
     dummy.select();
     document.execCommand("copy");
     document.body.removeChild(dummy);
     createToastAlert("Copied to Clipboard!");
+  });
+
+document
+  .getElementById("selectedChunksList")
+  .addEventListener("click", (event) => {
+    if (event.target.className === "selectedChunks__list__item") {
+      console.log(event.target.innerText);
+      const node = event.target.innerText;
+      if (selectedNodes.has(node)) {
+        createToastAlert(`Deleting: ${node}`);
+        selectedNodes.delete(node);
+        renderList();
+      }
+      console.log(selectedNodes);
+    }
   });
