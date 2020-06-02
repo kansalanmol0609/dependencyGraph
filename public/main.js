@@ -175,12 +175,12 @@ const plotTree = (treeData) => {
     // Update the node attributes and style
     nodeUpdate
       .select("circle.node")
-      .attr("r", 5)
+      .attr("r", 7)
       .style("fill", function (d) {
-        console.log(d.data.name)
-        if(selectedNodes.has(d.data.name)){
+        console.log(d.data.name);
+        if (selectedNodes.has(d.data.name)) {
           return "#FFEB3B";
-        }else{
+        } else {
           return d.data.repeated ? "red" : "white";
         }
       })
@@ -235,6 +235,23 @@ const plotTree = (treeData) => {
       selectDeselectNode(d.data.name);
       update(root);
     }
+
+    let old_element = document.getElementById("selectedChunksList");
+    let new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+
+    new_element.addEventListener("click", (event) => {
+      if (event.target.className === "selectedChunks__list__item") {
+        console.log(event.target.innerText);
+        const node = event.target.innerText;
+        if (selectedNodes.has(node)) {
+          createToastAlert(`Deleting: ${node}`);
+          selectedNodes.delete(node);
+          update(root);
+          renderList();
+        }
+      }
+    });
   }
 };
 
@@ -315,19 +332,4 @@ document
     document.execCommand("copy");
     document.body.removeChild(dummy);
     createToastAlert("Copied to Clipboard!");
-  });
-
-document
-  .getElementById("selectedChunksList")
-  .addEventListener("click", (event) => {
-    if (event.target.className === "selectedChunks__list__item") {
-      console.log(event.target.innerText);
-      const node = event.target.innerText;
-      if (selectedNodes.has(node)) {
-        createToastAlert(`Deleting: ${node}`);
-        selectedNodes.delete(node);
-        renderList();
-      }
-      console.log(selectedNodes);
-    }
   });
