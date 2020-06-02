@@ -4,7 +4,7 @@ body {
   min-width: 950px;
   display: flex;
   flex-flow: column;
-  min-height: 100vh;
+  height: 100vh;
   border: 5px solid steelblue;
 }
 

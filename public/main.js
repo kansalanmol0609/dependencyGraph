@@ -73,8 +73,8 @@ const plotTree = (treeData) => {
     }
   };
   childCount(0, treeData);
-  let height = Math.max(500, d3.max(levelWidth) * 13); // 20 pixels per line
-  let width = Math.max(900, levelWidth.length * 150);
+  let height = Math.max(500, d3.max(levelWidth) * 100); // 20 pixels per line
+  let width = Math.max(900, levelWidth.length * 300);
 
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
@@ -118,7 +118,7 @@ const plotTree = (treeData) => {
 
     // Normalize for fixed-depth.
     nodes.forEach(function (d) {
-      d.y = d.depth * 150;
+      d.y = d.depth * 300;
     });
 
     // ****************** Nodes section ***************************
