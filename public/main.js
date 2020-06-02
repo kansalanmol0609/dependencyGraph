@@ -157,6 +157,7 @@ const plotTree = (treeData) => {
       .attr("text-anchor", function (d) {
         return d.children || d._children ? "end" : "start";
       })
+      .attr("cursor", "pointer")
       .text(function (d) {
         return d.data.name;
       });
