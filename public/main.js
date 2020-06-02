@@ -246,7 +246,7 @@ const createTreeFormat = (rootChunk, isNodeDone) => {
   chunksGraph[rootChunk].forEach((child) => {
     if (!isNodeDone.has(child.name)) {
       tmpObj["children"].push(createTreeFormat(child.name, isNodeDone));
-    } else {
+    } else{
       tmpObj["children"].push({
         name: child.name,
         children: [],

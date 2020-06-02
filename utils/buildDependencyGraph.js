@@ -90,41 +90,44 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
   return fileData;
 };
 
-const DFS = (filePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList) => {
+const DFS = (filePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths) => {
   isNodeDone[filePath] = true;
-  dependencyGraph[filePath] = getImportsFromFile(filePath, srcContext, dynamicImportsList);
-  if (ExcludedPath(filePath)) {
+  if (ExcludedPath(filePath, excludedPaths)) {
+    dependencyGraph[filePath] = {
+      "staticImports": [],
+      "dynamicImports": [],
+    }
     return;
   }
+  dependencyGraph[filePath] = getImportsFromFile(filePath, srcContext, dynamicImportsList);
   // Static Imports
   dependencyGraph[filePath]["staticImports"].forEach(childFile => {
     if(!isNodeDone.hasOwnProperty(childFile)){
-      DFS(childFile, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
+      DFS(childFile, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
     }
   })
 
   // Dynamic Imports
   dependencyGraph[filePath]["dynamicImports"].forEach(childFile => {
     if(!isNodeDone.hasOwnProperty(childFile.childFilePath)){
-      DFS(childFile.childFilePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
+      DFS(childFile.childFilePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
     }
   })
   return;
 };
 
-const buildCompleteDependencyGraph = (entryPath, srcContext) => {
+const buildCompleteDependencyGraph = (entryPath, srcContext, excludedPaths) => {
   // const entryPath = getEntryPath();
   const dependencyGraph = {};
   const dynamicImportsList = new Map();
   const isNodeDone = {};
   isNodeDone[entryPath] = true;
-  DFS(entryPath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList);
+  DFS(entryPath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
   // console.log(dependencyGraph);
   return {
     dependencyGraph,
     dynamicImportsList
   };
 };
-// buildCompleteDependencyGraph();
 
 exports.buildCompleteDependencyGraph = buildCompleteDependencyGraph;

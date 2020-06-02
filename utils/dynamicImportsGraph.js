@@ -40,30 +40,37 @@ const createChunksGraph = (nodes, dependencyGraph, chunksGraph) => {
     const visitedNodes = new Set();
     // For every chunk
     nodes.forEach(node => {
+        const chunkCheck = new Set();
         chunksGraph[node.id] = [];
         // Dynamic Imports
         dependencyGraph[node.path]["dynamicImports"].forEach(chunk => {
-            chunksGraph[node.id].push({
-                name: chunk.chunkName,
-                path: chunk.childFilePath,
-            });
+            if(!chunkCheck.has(chunk.chunkName)){
+                chunksGraph[node.id].push({
+                    name: chunk.chunkName,
+                    path: chunk.childFilePath,
+                });
+                chunkCheck.add(chunk.chunkName);
+            }
         })
         // Static Imports
         dependencyGraph[node.path]["staticImports"].forEach(staticImportPath => {
             visitedNodes.clear();
             const chunksArray = findAllChildChunks(staticImportPath, dependencyGraph, isNodeDone, visitedNodes);
             chunksArray.forEach(chunk => {
-                chunksGraph[node.id].push({
-                    name: chunk.chunkName,
-                    path: chunk.childFilePath,
-                });
+                if(!chunkCheck.has(chunk.chunkName)){
+                    chunksGraph[node.id].push({
+                        name: chunk.chunkName,
+                        path: chunk.childFilePath,
+                    });
+                    chunkCheck.add(chunk.chunkName);
+                }
             });
         })
     })
 }
 
-const dynamicImportsGraph = (entryPath, srcContext) => {
-    const { dynamicImportsList, dependencyGraph} = buildCompleteDependencyGraph(entryPath, srcContext);
+const dynamicImportsGraph = (entryPath, srcContext, excludedPaths) => {
+    const { dynamicImportsList, dependencyGraph} = buildCompleteDependencyGraph(entryPath, srcContext, excludedPaths);
     console.log(dependencyGraph);
     const nodes = createNodes(dynamicImportsList);
     const chunksGraph = {};

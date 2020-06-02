@@ -10,7 +10,11 @@ const publicDirectoryPath = path.join(__dirname, "./public");
 const getAndSaveData = () => {
   const entryPath = path.resolve("./example-code/my-entry.js");
   const srcContext = path.resolve("./example-code");
-  const data = dynamicImportsGraph(entryPath, srcContext);
+  const excludedPaths = [
+    path.resolve("./example-code/components/header").split(path.sep)
+    // path.resolve("../node_modules").split(path.sep),
+  ];
+  const data = dynamicImportsGraph(entryPath, srcContext, excludedPaths);
   const jsonContent = JSON.stringify(data);
   fs.writeFileSync("cache.json", jsonContent, "utf8", function (err) {
     if (err) {
@@ -45,13 +49,12 @@ app.get("/deleteComputedGraph", (_, res) => {
   try {
     fs.unlinkSync("./cache.json");
     // Require stores this file in its cache
-    delete require.cache[require.resolve('./cache.json')];
-    console.log("Deleted!")
+    delete require.cache[require.resolve("./cache.json")];
+    console.log("Deleted!");
     res.send("Done Successfully!");
-  } 
-  catch(err) {
-    console.error("Error: ",err)
-  }  
+  } catch (err) {
+    console.error("Error: ", err);
+  }
 });
 
 app.get("*", (_, res) => {
