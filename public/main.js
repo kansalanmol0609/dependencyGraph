@@ -79,7 +79,7 @@ const plotTree = (treeData) => {
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
   // Set the dimensions and margins of the diagram
-  let margin = { top: 20, right: 90, bottom: 30, left: 90 };
+  let margin = { top: 20, right: 90, bottom: 30, left: 97 };
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
 
@@ -144,7 +144,7 @@ const plotTree = (treeData) => {
       .attr("class", "node")
       .attr("r", 1e-9)
       .style("fill", function (d) {
-        return d.children ? "lightsteelblue" : "white";
+        return d.children ? "steelblue" : "white";
       });
 
     // Add labels for the nodes
@@ -180,9 +180,9 @@ const plotTree = (treeData) => {
       .style("fill", function (d) {
         console.log(d.data.name);
         if (selectedNodes.has(d.data.name)) {
-          return "#FFEB3B";
+          return "#508E72";
         } else {
-          return d.data.repeated ? "red" : "white";
+          return d.data.repeated ? "#DC0000" : "white";
         }
       })
       .attr("cursor", "pointer");

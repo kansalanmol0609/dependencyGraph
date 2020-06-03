@@ -9,10 +9,12 @@ const publicDirectoryPath = path.join(__dirname, "./public");
 
 const getAndSaveData = () => {
   const entryPath = path.resolve("./example-code/my-entry.js");
+  // const entryPath = path.resolve("../newWebDProjects/react-bootstrap-master/src/index.js");
   const srcContext = path.resolve("./example-code");
+  // const srcContext = path.resolve("../newWebDProjects/react-bootstrap-master/src");
   const excludedPaths = [
     path.resolve("./example-code/components/header").split(path.sep)
-    // path.resolve("../node_modules").split(path.sep),
+    // path.resolve("../newWebDProjects/react-bootstrap-master/test").split(path.sep)
   ];
   const data = dynamicImportsGraph(entryPath, srcContext, excludedPaths);
   const jsonContent = JSON.stringify(data);
