@@ -20,7 +20,7 @@ function readFileContent(filepath) {
 // Get both static and dynamic Imports from a given absolute path file
 const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
   console.log("FILE BEING PARSED: ", filePath);
-  const dir = path.parse(filePath).dir;  
+  const dir = path.parse(filePath).dir;
   const fileContent = readFileContent(filePath);
   const fileAST = parser.parse(fileContent, {
     sourceType: "module",
@@ -37,15 +37,30 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
     ImportDeclaration(astPath) {
       const childFilePath = astPath.node.source.value;
       if (!isJsFile(childFilePath)) {
-				return;
-			}
-			const resolvedChildPath = getFilePath(dir, srcContext, childFilePath);
-			if (resolvedChildPath) {
-				if (typeof resolvedChildPath !== "string") {
-					debugger;
-				}
+        return;
+      }
+      const resolvedChildPath = getFilePath(dir, srcContext, childFilePath);
+      if (resolvedChildPath) {
+        if (typeof resolvedChildPath !== "string") {
+          debugger;
+        }
         fileData["staticImports"].push(resolvedChildPath);
-			}
+      }
+    },
+    ExportNamedDeclaration(astPath) {
+      if (astPath.node.source) {
+        const childFilePath = astPath.node.source.value;
+        if (!isJsFile(childFilePath)) {
+          return;
+        }
+        const resolvedChildPath = getFilePath(dir, srcContext, childFilePath);
+        if (resolvedChildPath) {
+          if (typeof resolvedChildPath !== "string") {
+            debugger;
+          }
+          fileData["staticImports"].push(resolvedChildPath);
+        }
+      }
     },
     CallExpression(astPath) {
       const callExpNode = astPath.node;
@@ -61,10 +76,10 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
             debugger;
           }
           let chunkName = getChunkNameFromArgument(callExpNode.arguments[0]);
-          if(!chunkName){
+          if (!chunkName) {
             chunkName = childFilePath;
           }
-          dynamicImportsList.set( chunkName , resolvedChildPath );
+          dynamicImportsList.set(chunkName, resolvedChildPath);
           fileData["dynamicImports"].push({
             childFilePath: resolvedChildPath,
             chunkName,
@@ -90,29 +105,54 @@ const getImportsFromFile = (filePath, srcContext, dynamicImportsList) => {
   return fileData;
 };
 
-const DFS = (filePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths) => {
+const DFS = (
+  filePath,
+  dependencyGraph,
+  isNodeDone,
+  srcContext,
+  dynamicImportsList,
+  excludedPaths
+) => {
   isNodeDone[filePath] = true;
   if (ExcludedPath(filePath, excludedPaths)) {
     dependencyGraph[filePath] = {
-      "staticImports": [],
-      "dynamicImports": [],
-    }
+      staticImports: [],
+      dynamicImports: [],
+    };
     return;
   }
-  dependencyGraph[filePath] = getImportsFromFile(filePath, srcContext, dynamicImportsList);
+  dependencyGraph[filePath] = getImportsFromFile(
+    filePath,
+    srcContext,
+    dynamicImportsList
+  );
   // Static Imports
-  dependencyGraph[filePath]["staticImports"].forEach(childFile => {
-    if(!isNodeDone.hasOwnProperty(childFile)){
-      DFS(childFile, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
+  dependencyGraph[filePath]["staticImports"].forEach((childFile) => {
+    if (!isNodeDone.hasOwnProperty(childFile)) {
+      DFS(
+        childFile,
+        dependencyGraph,
+        isNodeDone,
+        srcContext,
+        dynamicImportsList,
+        excludedPaths
+      );
     }
-  })
+  });
 
   // Dynamic Imports
-  dependencyGraph[filePath]["dynamicImports"].forEach(childFile => {
-    if(!isNodeDone.hasOwnProperty(childFile.childFilePath)){
-      DFS(childFile.childFilePath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
+  dependencyGraph[filePath]["dynamicImports"].forEach((childFile) => {
+    if (!isNodeDone.hasOwnProperty(childFile.childFilePath)) {
+      DFS(
+        childFile.childFilePath,
+        dependencyGraph,
+        isNodeDone,
+        srcContext,
+        dynamicImportsList,
+        excludedPaths
+      );
     }
-  })
+  });
   return;
 };
 
@@ -122,11 +162,18 @@ const buildCompleteDependencyGraph = (entryPath, srcContext, excludedPaths) => {
   const dynamicImportsList = new Map();
   const isNodeDone = {};
   isNodeDone[entryPath] = true;
-  DFS(entryPath, dependencyGraph, isNodeDone, srcContext, dynamicImportsList, excludedPaths);
+  DFS(
+    entryPath,
+    dependencyGraph,
+    isNodeDone,
+    srcContext,
+    dynamicImportsList,
+    excludedPaths
+  );
   // console.log(dependencyGraph);
   return {
     dependencyGraph,
-    dynamicImportsList
+    dynamicImportsList,
   };
 };
 
