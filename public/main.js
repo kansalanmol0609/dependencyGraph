@@ -51,9 +51,9 @@ const renderList = () => {
   if (selectedNodes.size) {
     Array.from(selectedNodes).forEach((node, index) => {
       const pEl = document.createElement("p");
-      if(index !== (selectedNodes.size-1)){
+      if (index !== selectedNodes.size - 1) {
         pEl.textContent = `${node},`;
-      }else{
+      } else {
         pEl.textContent = `${node}`;
       }
       pEl.className = "selectedChunks__list__item";
@@ -94,6 +94,8 @@ const plotTree = (treeData) => {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  document.querySelector("#svgDiv").scrollIntoView({block: "center"});
 
   var i = 0,
     duration = 750,
@@ -110,7 +112,19 @@ const plotTree = (treeData) => {
   root.x0 = height / 2;
   root.y0 = 0;
 
+  // Collapse after the second level
+  root.children.forEach(collapse);
+
   update(root);
+
+  // Collapse the node and all it's children
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
 
   function update(source) {
     // Assigns the x and y position for the nodes
@@ -125,8 +139,6 @@ const plotTree = (treeData) => {
       d.y = d.depth * 300;
     });
 
-    // ****************** Nodes section ***************************
-
     // Update the nodes...
     let node = svg.selectAll("g.node").data(nodes, function (d) {
       return d.id || (d.id = ++i);
@@ -140,7 +152,8 @@ const plotTree = (treeData) => {
       .attr("transform", function (d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
       })
-      .on("click", click);
+      .on("click", click)
+      .on("contextmenu", mouseover);
 
     // Add Circle for the nodes
     nodeEnter
@@ -148,7 +161,7 @@ const plotTree = (treeData) => {
       .attr("class", "node")
       .attr("r", 1e-9)
       .style("fill", function (d) {
-        return d.children ? "steelblue" : "white";
+        return d._children ? "lightsteelblue" : "#fff";
       });
 
     // Add labels for the nodes
@@ -185,11 +198,29 @@ const plotTree = (treeData) => {
         // console.log(d.data.name);
         if (selectedNodes.has(d.data.name)) {
           return "green";
+        } else if (d.data.repeated) {
+          return "red";
         } else {
-          return d.data.repeated ? "red" : "white";
+          return d._children ? "lightsteelblue" : "#fff";
         }
       })
       .attr("cursor", "pointer");
+
+    // Remove any exiting nodes
+    var nodeExit = node
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("transform", function (d) {
+        return "translate(" + source.y + "," + source.x + ")";
+      })
+      .remove();
+
+    // On exit reduce the node circles size to 0
+    nodeExit.select("circle").attr("r", 1e-6);
+
+    // On exit reduce the opacity of text labels
+    nodeExit.select("text").style("fill-opacity", 1e-6);
 
     // ****************** links section ***************************
 
@@ -219,6 +250,17 @@ const plotTree = (treeData) => {
         return diagonal(d, d.parent);
       });
 
+    // Remove any exiting links
+    var linkExit = link
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("d", function (d) {
+        var o = { x: source.x, y: source.y };
+        return diagonal(o, o);
+      })
+      .remove();
+
     // Store the old positions for transition.
     nodes.forEach(function (d) {
       d.x0 = d.x;
@@ -236,6 +278,17 @@ const plotTree = (treeData) => {
     }
 
     // Toggle children on click.
+    function mouseover(d) {
+      if (d.children) {
+        d._children = d.children;
+        d.children = null;
+      } else {
+        d.children = d._children;
+        d._children = null;
+      }
+      update(d);
+    }
+
     function click(d) {
       selectDeselectNode(d.data.name);
       update(root);
@@ -249,8 +302,8 @@ const plotTree = (treeData) => {
       if (event.target.className === "selectedChunks__list__item") {
         // console.log(event.target.innerText);
         let node = event.target.innerText;
-        if(node.endsWith(",")){
-          node = node.substr(0, node.length-1);
+        if (node.endsWith(",")) {
+          node = node.substr(0, node.length - 1);
         }
         if (selectedNodes.has(node)) {
           createToastAlert(`Deleting: ${node}`);
@@ -342,3 +395,5 @@ document
     document.body.removeChild(dummy);
     createToastAlert("Copied to Clipboard!");
   });
+
+document.addEventListener("contextmenu", (event) => event.preventDefault());

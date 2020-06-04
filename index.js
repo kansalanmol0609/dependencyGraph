@@ -60,7 +60,7 @@ app.get("/deleteComputedGraph", (_, res) => {
 });
 
 app.get("*", (_, res) => {
-  res.send("Error 404");
+  res.redirect("/");
 });
 
 app.listen(port, function () {
