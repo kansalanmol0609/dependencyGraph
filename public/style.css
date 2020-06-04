@@ -5,70 +5,12 @@ body {
   display: flex;
   flex-flow: column;
   height: 100vh;
-  border: 5px solid #499471;
-}
-
-.heading {
-  margin: 0;
-  min-width: 950px;
-  background-color: #499471;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.heading__options {
-  display: none;
-  flex-direction: row;
+  /* border: 5px solid #499471; */
 }
 
 .heading__load {
   display: flex;
   flex-direction: row;
-}
-
-.heading__text {
-  margin-left: 1vw;
-  margin-right: 5vw;
-  font-size: 2rem;
-  color: white;
-  font-weight: 800;
-}
-
-.heading__header {
-  margin-left: 5vw;
-  font-size: 2.3rem;
-  color: white;
-}
-
-.heading__button {
-  margin-right: 5vw;
-  border-radius: 5px;
-  font-size: 1.05rem;
-  background: #555A60;
-  color: white;
-  border: 2px #555A60 solid;
-  padding: 0.5vw;
-  padding-left: 1.5vw;
-  padding-right: 1.5vw;
-}
-
-.heading__button:hover {
-  cursor: pointer;
-}
-
-.heading__search {
-  margin-right: 5vw;
-}
-
-#inputChunk {
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 5px;
-  color: #499471;
-  border: 2px #499471 solid;
-  padding: 0.5vw;
 }
 
 .content {
@@ -83,7 +25,7 @@ body {
 
 .node circle {
   fill: #fff;
-  stroke: #499471;
+  stroke: #343A40;
   stroke-width: 3px;
 }
 
@@ -97,54 +39,22 @@ body {
   stroke-width: 2px;
 }
 
-.heading__loading {
-  border: 5px solid white;
-  border-radius: 50%;
-  border-top: 5px solid skyblue;
-  width: 2vw;
-  height: 2vw;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-::placeholder {
-  color: #499471;
-}
-
-.toast {
+.toaster {
   position: fixed;
   bottom: 0;
   right: 0;
 }
 
 .toast__message {
-  background-color: #499471;
+  background-color: #343A40;
   color: white;
   margin: 0;
   padding: 0;
-  min-width: 300px;
+  min-width: 250px;
   text-align: center;
-  font-size: 1.1rem;
-  height: 40px;
-  line-height: 40px;
+  font-size: 1.0rem;
+  height: 35px;
+  line-height: 35px;
   margin-right: 10px;
   margin-bottom: 10px;
   border-radius: 2px;
@@ -198,31 +108,18 @@ body {
 .selectedChunks {
   display: none;
   flex-direction: row;
-  width: 98%;
-  min-height: 40px;
-  padding: 10px;
+  width: 100%;
+  height: 50px;
+  padding: 5px;
 }
 
-.selectedChunks__button {
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: 600;
-  background: #499471;
-  color: white;
-  border: 1px #499471 solid;
-  padding: 0.5vw;
-  padding-left: 1.5vw;
-  padding-right: 1.5vw;
-  height: 40px;
-}
 .selectedChunks__list{
-  border: 1px #499471 solid;
+  border: 1px #343A40 solid;
   border-radius: 5px;
   font-size: 1rem;
-  font-weight: 600;
   line-height: 40px;
   margin-left: 10px;
-  color: #499471;
+  color: #343A40;
   flex-grow: 1;
   padding-left: 6px;
   padding-right: 6px;
@@ -230,7 +127,7 @@ body {
 
 .selectedChunks__list__item{
   margin: 0;
-  margin-left: 10px;
+  margin-left: 7px;
   display: inline;
 }
 

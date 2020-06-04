@@ -13,7 +13,7 @@ const createToastAlert = (content) => {
   const pEl = document.createElement("p");
   pEl.textContent = content;
   pEl.className = "toast__message";
-  document.querySelector(".toast").appendChild(pEl);
+  document.querySelector(".toaster").appendChild(pEl);
   setTimeout(function () {
     pEl.remove();
   }, 3000);
@@ -180,9 +180,9 @@ const plotTree = (treeData) => {
       .style("fill", function (d) {
         console.log(d.data.name);
         if (selectedNodes.has(d.data.name)) {
-          return "#508E72";
+          return "green";
         } else {
-          return d.data.repeated ? "#DC0000" : "white";
+          return d.data.repeated ? "red" : "white";
         }
       })
       .attr("cursor", "pointer");
@@ -326,6 +326,7 @@ document
 document
   .getElementById("selectedChunksButton")
   .addEventListener("click", () => {
+    console.log("Copied!")
     let dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
     dummy.value = getSelectedChunkText();
