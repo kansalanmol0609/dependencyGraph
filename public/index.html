@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand ml-3" href="javascript:void(0);">Chunks Dependency Graph</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+      <a class="navbar-brand" href="javascript:void(0);">Chunks Dependency Graph</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -53,7 +53,7 @@
         </form>
       </div>
     </nav>
-    <div class="selectedChunks">
+    <div class="selectedChunks px-4">
       <button type="button" class="btn btn-info" id="selectedChunksButton">Copy</button>
       <div class="selectedChunks__list" id="selectedChunksList">
         No Chunk Selected!
@@ -62,7 +62,10 @@
     <div class="content">
       <div id="svgDiv"></div>
     </div>
-    <div class="toaster"></div>
+    <div class="toasterCover">
+      <div class="toaster">
+      </div>
+    </div>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

@@ -31,7 +31,7 @@ const selectDeselectNode = (node) => {
     selectedNodes.add(node);
   }
   renderList();
-  console.log(selectedNodes);
+  // console.log(selectedNodes);
 };
 
 const getSelectedChunkText = () => {
@@ -49,9 +49,13 @@ const renderList = () => {
   const divEl = document.getElementById("selectedChunksList");
   divEl.innerHTML = null;
   if (selectedNodes.size) {
-    selectedNodes.forEach((node) => {
+    Array.from(selectedNodes).forEach((node, index) => {
       const pEl = document.createElement("p");
-      pEl.textContent = `${node}`;
+      if(index !== (selectedNodes.size-1)){
+        pEl.textContent = `${node},`;
+      }else{
+        pEl.textContent = `${node}`;
+      }
       pEl.className = "selectedChunks__list__item";
       divEl.appendChild(pEl);
     });
@@ -178,7 +182,7 @@ const plotTree = (treeData) => {
       .select("circle.node")
       .attr("r", 7)
       .style("fill", function (d) {
-        console.log(d.data.name);
+        // console.log(d.data.name);
         if (selectedNodes.has(d.data.name)) {
           return "green";
         } else {
@@ -243,8 +247,11 @@ const plotTree = (treeData) => {
 
     new_element.addEventListener("click", (event) => {
       if (event.target.className === "selectedChunks__list__item") {
-        console.log(event.target.innerText);
-        const node = event.target.innerText;
+        // console.log(event.target.innerText);
+        let node = event.target.innerText;
+        if(node.endsWith(",")){
+          node = node.substr(0, node.length-1);
+        }
         if (selectedNodes.has(node)) {
           createToastAlert(`Deleting: ${node}`);
           selectedNodes.delete(node);
@@ -326,7 +333,7 @@ document
 document
   .getElementById("selectedChunksButton")
   .addEventListener("click", () => {
-    console.log("Copied!")
+    // console.log("Copied!")
     let dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
     dummy.value = getSelectedChunkText();
