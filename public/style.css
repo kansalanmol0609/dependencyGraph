@@ -13,14 +13,6 @@ body {
   align-items: center;
 }
 
-#inputChunk {
-  width: 300px;
-}
-
-/* #inputChunk:hover {
-  cursor: pointer;
-} */
-
 .heading__options {
   display: none;
 }
@@ -157,6 +149,31 @@ body {
   text-decoration: line-through;
 }
 
-input::-webkit-calendar-picker-indicator {
-  display: none;
+.ui.label {
+  background-color: #eee;
+  color: #666 !important;
+  font-size: 13px;
+}
+.ui.label .icon:before {
+  content: "\f00d";
+  font-family: fontAwesome;
+  font-style: normal;
+  font-size: 12px;
+  padding-left: 5px;
+  position: relative;
+  top: -1px;
+}
+.ui.label .icon:hover:before {
+  color: #f00;
+}
+
+.ui.selection.dropdown {
+  line-height: 0.7em;
+  min-height: 1rem;
+}
+
+#selectedChunksButton {
+  height: 35px;
+  margin-top: 2.5px;
+  font-size: 0.9rem ;
 }

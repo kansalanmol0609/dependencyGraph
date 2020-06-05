@@ -9,6 +9,14 @@
       integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/components/transition.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/components/dropdown.min.css"
+    />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -34,16 +42,12 @@
           <a class="navbar-brand ml-3" href="javascript:void(0);">Loading...</a>
         </div>
         <form class="form-inline heading__options">
-          <input
-            list="browsers"
-            name="browser"
-            id="inputChunk"
-            class="form-control mr-sm-2"
-            type="search"
-            placeholder="Select Root Chunk"
-            aria-label="Select Root Chunk"
-          />
-          <datalist id="browsers"> </datalist>
+          <div class="ui fluid search selection dropdown" style="width: 300px;">
+            <input type="hidden" name="country" id="inputChunk" />
+            <i class="dropdown icon"></i>
+            <div class="default text">Select Root Chunk</div>
+            <div class="menu" id="inputChunkMenu"></div>
+          </div>
           <button
             class="btn btn-outline-info ml-3 my-2 my-sm-0"
             type="submit"
@@ -55,12 +59,7 @@
       </div>
     </nav>
     <div class="selectedChunks px-4">
-      <button
-        type="button"
-        class="btn btn-info"
-        id="selectedChunksButton"
-        style="height: 35px; margin-top: 1px; font-size: 0.9rem"
-      >
+      <button type="button" class="btn btn-info" id="selectedChunksButton">
         Copy
       </button>
       <div class="selectedChunks__list" id="selectedChunksList">
@@ -89,6 +88,8 @@
       crossorigin="anonymous"
     ></script>
     <script src="d3.v4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/components/transition.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/components/dropdown.min.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

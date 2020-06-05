@@ -335,11 +335,14 @@ const initialize = async () => {
     nodes = data.nodes;
     chunksGraph = data.chunksGraph;
     // Select Chunk
-    let chunkSelectEl = document.getElementById("browsers");
+    let chunkMenuEl = document.getElementById("inputChunkMenu");
     nodes.forEach((node) => {
-      let option = document.createElement("option");
-      option.setAttribute("value", node.label);
-      chunkSelectEl.appendChild(option);
+      let divEl = document.createElement("div");
+      divEl.className = "item";
+      divEl.setAttribute("data-value", node.label);
+      divEl.setAttribute("title", node.label);
+      divEl.textContent = node.label;
+      chunkMenuEl.appendChild(divEl);
     });
   }
 };
@@ -365,17 +368,16 @@ const createTreeFormat = (rootChunk, isNodeDone) => {
   return tmpObj;
 };
 
-let a = document.getElementsByName("browser")[0];
-a.addEventListener("change", function (e) {
-  let rootChunk = this.value;
+document.getElementById("inputChunk").addEventListener("change", function (e) {
   e.preventDefault();
+  console.log(e.target.value);
+  let rootChunk = e.target.value;
   if (chunksGraph.hasOwnProperty(rootChunk)) {
     let isNodeDone = new Map();
     let treeData = createTreeFormat(rootChunk, isNodeDone);
     plotTree(treeData);
   } else {
     console.log("Invalid Option!");
-    document.getElementById("inputChunk").value = "";
   }
 });
 
@@ -407,3 +409,4 @@ document
   });
 
 document.addEventListener("contextmenu", (event) => event.preventDefault());
+$('.ui.dropdown').dropdown();
