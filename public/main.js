@@ -50,11 +50,11 @@ const renderList = () => {
   if (selectedNodes.size) {
     Array.from(selectedNodes).forEach((node, index) => {
       const pEl = document.createElement("p");
-      if (index !== selectedNodes.size - 1) {
-        pEl.textContent = `${node},`;
-      } else {
+      // if (index !== selectedNodes.size - 1) {
+      //   pEl.textContent = `${node},`;
+      // } else {
         pEl.textContent = `${node}`;
-      }
+      // }
       pEl.className = "selectedChunks__list__item";
       divEl.appendChild(pEl);
     });

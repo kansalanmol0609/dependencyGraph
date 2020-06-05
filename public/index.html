@@ -13,7 +13,9 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-      <a class="navbar-brand" href="javascript:void(0);">Chunks Dependency Graph</a>
+      <a class="navbar-brand" href="javascript:void(0);"
+        >Chunks Dependency Graph</a
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -28,8 +30,7 @@
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav mr-auto"></ul>
         <div class="heading__load">
-          <div class="spinner-border text-light" role="status">
-          </div>
+          <div class="spinner-border text-light" role="status"></div>
           <a class="navbar-brand ml-3" href="javascript:void(0);">Loading...</a>
         </div>
         <form class="form-inline heading__options">
@@ -54,7 +55,14 @@
       </div>
     </nav>
     <div class="selectedChunks px-4">
-      <button type="button" class="btn btn-info" id="selectedChunksButton">Copy</button>
+      <button
+        type="button"
+        class="btn btn-info"
+        id="selectedChunksButton"
+        style="height: 35px; margin-top: 1px; font-size: 0.9rem"
+      >
+        Copy
+      </button>
       <div class="selectedChunks__list" id="selectedChunksList">
         No Chunk Selected!
       </div>
@@ -63,8 +71,7 @@
       <div id="svgDiv"></div>
     </div>
     <div class="toasterCover">
-      <div class="toaster">
-      </div>
+      <div class="toaster"></div>
     </div>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

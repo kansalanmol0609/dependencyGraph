@@ -17,9 +17,9 @@ body {
   width: 300px;
 }
 
-#inputChunk:hover {
+/* #inputChunk:hover {
   cursor: pointer;
-}
+} */
 
 .heading__options {
   display: none;
@@ -132,8 +132,8 @@ body {
 .selectedChunks__list {
   border: 1px #343a40 solid;
   border-radius: 5px;
-  font-size: 1rem;
-  line-height: 40px;
+  font-size: 0.9rem;
+  line-height: 36px;
   margin-left: 10px;
   color: #343a40;
   flex-grow: 1;
@@ -143,12 +143,18 @@ body {
 
 .selectedChunks__list__item {
   margin: 0;
+  border: 1px #343a40 solid;
   margin-left: 7px;
   display: inline;
+  padding: 3px;
+  border-radius: 10px;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 .selectedChunks__list__item:hover {
   cursor: pointer;
+  text-decoration: line-through;
 }
 
 input::-webkit-calendar-picker-indicator {
