@@ -2,7 +2,6 @@ const getData = async () => {
   const URL = `${window.location.href}getChunksdata`;
   const response = await fetch(URL);
   const jsonData = await response.json();
-  console.log(jsonData);
   document.querySelector(".heading__load").style.display = "none";
   document.querySelector(".heading__options").style.display = "flex";
   document.querySelector(".selectedChunks").style.display = "flex";
@@ -77,13 +76,13 @@ const plotTree = (treeData) => {
     }
   };
   childCount(0, treeData);
-  let height = Math.max(500, d3.max(levelWidth) * 100); // 20 pixels per line
-  let width = Math.max(900, levelWidth.length * 300);
+  let width = Math.max(900, d3.max(levelWidth)*1.5); // 20 pixels per line
+  let height = Math.max(500, levelWidth.length * 220);
 
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
   // Set the dimensions and margins of the diagram
-  let margin = { top: 20, right: 90, bottom: 30, left: 97 };
+  let margin = { top: 30, right: 30, bottom: 30, left: 30 };
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
 
@@ -94,26 +93,28 @@ const plotTree = (treeData) => {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
-  document.querySelector("#svgDiv").scrollIntoView({block: "center"});
 
   var i = 0,
-    duration = 750,
+    duration = 300,
     root;
+  
+    document.querySelector("#svgDiv").scrollIntoView(true);
 
   // declares a tree layout and assigns the size
-  let treemap = d3.tree().size([height, width]);
+  let treemap = d3.tree().size([width, height]);
 
   // Assigns parent, children, height, depth
   // Constructs a root node from the specified hierarchical data
   root = d3.hierarchy(treeData, function (d) {
     return d.children;
   });
-  root.x0 = height / 2;
+  root.x0 = height / 2; // centering root
   root.y0 = 0;
 
   // Collapse after the second level
-  root.children.forEach(collapse);
+  if (root.children) {
+    root.children.forEach(collapse);
+  }
 
   update(root);
 
@@ -129,14 +130,13 @@ const plotTree = (treeData) => {
   function update(source) {
     // Assigns the x and y position for the nodes
     let treeData = treemap(root);
-
-    // Compute the new tree layout.
+    // Compute the new tree layout
     let nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
 
     // Normalize for fixed-depth.
     nodes.forEach(function (d) {
-      d.y = d.depth * 300;
+      d.y = d.depth * 220;
     });
 
     // Update the nodes...
@@ -150,7 +150,7 @@ const plotTree = (treeData) => {
       .append("g")
       .attr("class", "node")
       .attr("transform", function (d) {
-        return "translate(" + source.y0 + "," + source.x0 + ")";
+        return "translate(" + d.x + "," + d.y + ")";
       })
       .on("click", click)
       .on("contextmenu", mouseover);
@@ -168,18 +168,19 @@ const plotTree = (treeData) => {
     nodeEnter
       .append("text")
       .attr("dy", ".35em")
-      .attr("x", function (d) {
-        return d.children || d._children ? -13 : 13;
+      .attr("y", function (d) {
+        return d.children || d._children ? -20 : 20;
       })
       .attr("text-anchor", function (d) {
-        return d.children || d._children ? "end" : "start";
+        return "middle";
+        // return d.children || d._children ? "end" : "start";
       })
       .attr("cursor", "pointer")
       .text(function (d) {
         return d.data.name;
       });
 
-    // UPDATE
+    // Merge Text wuth Node
     let nodeUpdate = nodeEnter.merge(node);
 
     // Transition to the proper position for the node
@@ -187,7 +188,7 @@ const plotTree = (treeData) => {
       .transition()
       .duration(duration)
       .attr("transform", function (d) {
-        return "translate(" + d.y + "," + d.x + ")";
+        return "translate(" + d.x + "," + d.y + ")";
       });
 
     // Update the node attributes and style
@@ -212,7 +213,7 @@ const plotTree = (treeData) => {
       .transition()
       .duration(duration)
       .attr("transform", function (d) {
-        return "translate(" + source.y + "," + source.x + ")";
+        return "translate(" + source.x + "," + source.y + ")";
       })
       .remove();
 
@@ -269,10 +270,10 @@ const plotTree = (treeData) => {
 
     // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
-      path = `M ${s.y} ${s.x}
-            C ${(s.y + d.y) / 2} ${s.x},
-              ${(s.y + d.y) / 2} ${d.x},
-              ${d.y} ${d.x}`;
+      path = `M ${d.x} ${d.y}
+            C ${d.x} ${(d.y + s.y) / 2},
+              ${s.x} ${(d.y + s.y) / 2},
+              ${s.x} ${s.y}`;
 
       return path;
     }
@@ -282,7 +283,16 @@ const plotTree = (treeData) => {
       if (d.children) {
         d._children = d.children;
         d.children = null;
-      } else {
+      } else if(d.children || d._children) {
+        // If we have to show it's children, we do not show its sibling nodes' children
+        if (d.ancestors().length > 1) {
+          d.ancestors()[1].children.forEach((child) => {
+            if (child.children) {
+              child._children = child.children;
+              child.children = null;
+            }
+          });
+        }
         d.children = d._children;
         d._children = null;
       }
