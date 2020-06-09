@@ -50,11 +50,7 @@ const renderList = () => {
   if (selectedNodes.size) {
     Array.from(selectedNodes).forEach((node, index) => {
       const pEl = document.createElement("p");
-      // if (index !== selectedNodes.size - 1) {
-      //   pEl.textContent = `${node},`;
-      // } else {
-        pEl.textContent = `${node}`;
-      // }
+      pEl.textContent = `${node}`;
       pEl.className = "selectedChunks__list__item";
       divEl.appendChild(pEl);
     });
@@ -76,13 +72,13 @@ const plotTree = (treeData) => {
     }
   };
   childCount(0, treeData);
-  let width = Math.max(900, d3.max(levelWidth)*1.5); // 20 pixels per line
+  let width = Math.max(900, d3.max(levelWidth) * 23); // 20 pixels per line
   let height = Math.max(500, levelWidth.length * 220);
 
   // Clear Previous SVG
   document.getElementById("svgDiv").innerHTML = null;
   // Set the dimensions and margins of the diagram
-  let margin = { top: 30, right: 30, bottom: 30, left: 30 };
+  let margin = { top: 90, right: 30, bottom: 30, left: 30 };
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
 
@@ -97,8 +93,8 @@ const plotTree = (treeData) => {
   var i = 0,
     duration = 300,
     root;
-  
-    document.querySelector("#svgDiv").scrollIntoView(true);
+
+  document.querySelector("#svgDiv").scrollIntoView(true);
 
   // declares a tree layout and assigns the size
   let treemap = d3.tree().size([width, height]);
@@ -178,6 +174,9 @@ const plotTree = (treeData) => {
       .attr("cursor", "pointer")
       .text(function (d) {
         return d.data.name;
+      })
+      .attr("transform", function (d) {
+        return "rotate(-60)";
       });
 
     // Merge Text wuth Node
@@ -283,7 +282,7 @@ const plotTree = (treeData) => {
       if (d.children) {
         d._children = d.children;
         d.children = null;
-      } else if(d.children || d._children) {
+      } else if (d.children || d._children) {
         // If we have to show it's children, we do not show its sibling nodes' children
         if (d.ancestors().length > 1) {
           d.ancestors()[1].children.forEach((child) => {
@@ -409,4 +408,21 @@ document
   });
 
 document.addEventListener("contextmenu", (event) => event.preventDefault());
-$('.ui.dropdown').dropdown();
+$(".ui.dropdown").dropdown();
+
+const dummyData = (level, currLevel = 1) => {
+  let tmpObj = [];
+  // console.log("Hi")
+  if (level != 0) {
+    for (let i = 0; i < currLevel; i++) {
+      tmpObj.push({
+        name: "Thor",
+        children: dummyData(level - 1, currLevel + 1),
+      });
+    }
+  }
+  return tmpObj;
+};
+
+console.log(dummyData(6)[0]);
+plotTree(dummyData(6)[0]);

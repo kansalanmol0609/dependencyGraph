@@ -177,3 +177,7 @@ body {
   margin-top: 2.5px;
   font-size: 0.9rem ;
 }
+
+/* #inputChunkMenu > .item {
+  text-overflow: ellipsis;
+} */
